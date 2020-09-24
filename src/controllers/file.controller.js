@@ -6,18 +6,19 @@ const upload = async (req, res) => {
 
         await fileUpload(req, res)
 
+        console.log('-------------', req.file, '----------------')
         if (req.file === undefined) {
-            res.status(400).json({
+            return res.status(400).send({
                 message: `Bad request, please upload valid file`
             })
         }
 
-        res.status(200).json({
+        res.status(200).send({
             message: `Uploaded the file succefully: ${req.file.originalname}`
         })
 
     } catch (err) {
-        res.status(500).json({ message: `Could not upload file: ${req.file.originalname}. ${err}` })
+        res.status(500).send({ message: `Could not upload file. ${err}` })
     }
 }
 
@@ -37,7 +38,7 @@ const getListFiles = (req, res) => {
         files.forEach(filename => {
             filesInfos.push({
                 name: filename,
-                url: 'http://localhsot:4444/' + filename
+                url: 'http://localhost:8080/files/' + filename
             })
         })
 
@@ -50,7 +51,7 @@ const getListFiles = (req, res) => {
 
 const download = (req, res) => {
     const filename = req.params.name
-    const directoryPath = __basedir + '/resources/static/assets/uploads'
+    const directoryPath = __basedir + '/resources/static/assets/uploads/'
 
     res.download(directoryPath + filename, filename, (err) => {
         if (err) {
